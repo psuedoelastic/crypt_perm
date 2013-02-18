@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) Jenia Grubian
+ * Licensed under GPLv2
+ * Simple cryptography library that uses permutations of 8 numbers to encrypt and decrypt byte array
+ */
+
 #include "crypt_perm.h"
 
 std::vector< std::bitset<8> > bytesToBitsetArray(char *data, int numBytes)
