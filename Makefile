@@ -12,5 +12,5 @@ Permutation.o: Permutation.cpp Permutation.h
 	$(GXX) $(FLAGS) -c Permutation.cpp
 
 clean:
-	rm -f crypt_perm.so
+	rm -f crypt_perm.a
 
