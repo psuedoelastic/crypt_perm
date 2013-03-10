@@ -49,6 +49,7 @@ class Permutation
 
 		/* operator that returns i element in permutation */
 		int operator[](int i) const;
+		
 };
 
 #endif
