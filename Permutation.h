@@ -6,25 +6,25 @@
 
 #ifndef PERMUTATION_H
 #define PERMUTATION_H
-typedef unsigned char u_char;
+
 #include <string>
 
 class Permutation
 {
 	private:
-		u_char* numbers; 
+		int* numbers; 
 	
 	public:
-		const u_char k; // number of elements in permutation
+		const int k; // number of elements in permutation
 
 		/* 
 		 * constructor to init permutation with two arguments: 
 		 * number of elements and ptr to int array that represents elements in permutation
 		 */
-	    Permutation(const u_char, u_char*); 
+	    Permutation(const int, int*); 
 
 	    /* constructor that init neutral permutation with one argument: number of elements */
-		Permutation(const u_char); 
+		Permutation(const int); 
 
 		/* constructor that does not init permutation setting number of elements to zero */
 		Permutation(); 
@@ -48,7 +48,7 @@ class Permutation
 		friend bool operator!=(const Permutation&, const Permutation&);
 
 		/* operator that returns i element in permutation */
-		u_char operator[](int i) const;
+		int operator[](int i) const;
 };
 
 #endif
