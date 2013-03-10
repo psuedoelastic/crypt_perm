@@ -8,14 +8,14 @@
 #include "AddException.h"
 #include <sstream>
 
-Permutation::Permutation(const int n, int* a) : numbers(a), k(n)
+Permutation::Permutation(const u_char n, u_char* a) : numbers(a), k(n)
 {
 	
 }
 
-Permutation::Permutation(const int k) : k(k) 
+Permutation::Permutation(const u_char k) : k(k) 
 {
-	numbers=new int[k];
+	numbers=new u_char[k];
 	for (int i=0; i<k; i++)
 	{
 		numbers[i]=i+1;
@@ -37,7 +37,7 @@ int Permutation::NumberOfInversions()
 	int rez = 0;
    	for (int i=0; i<k; i++)
 	{
-		int head = numbers[i];
+		u_char head = numbers[i];
 		for (int j=i+1; j<k; j++)
 		{
 			if (head > numbers[j]) rez++;
@@ -68,7 +68,7 @@ Permutation operator+(const Permutation& p1, const Permutation& p2)
 	else 
 	{
 		int n=p1.k;
-		int* rez = new int[n];
+		u_char* rez = new u_char[n];
 		for (int i=0; i<n; i++)
 		{
 			rez[i] = p2.numbers[p1.numbers[i]-1];
@@ -80,7 +80,7 @@ Permutation operator+(const Permutation& p1, const Permutation& p2)
 Permutation operator-(const Permutation& p) 
 {
 	int n=p.k;
-	int* rez = new int[n];
+	u_char* rez = new u_char[n];
 	for (int i=0; i<n; i++)
 	{
 		rez[p.numbers[i]-1] = i+1;
@@ -93,7 +93,7 @@ bool operator==(const Permutation& p1, const Permutation& p2)
 	if (p1.k!=p2.k) return false;
 	else 
 	{
-		int k_=p1.k;
+		u_char k_=p1.k;
 		for (int i=0; i<k_; i++)
 		{
 			if (p1.numbers[i]!=p2.numbers[i]) return false;
