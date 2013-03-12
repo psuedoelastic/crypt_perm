@@ -5,23 +5,50 @@
  */
 
 #include "crypt_perm.h"
+#include <iostream>
 
-std::vector< std::bitset<8> > bytesToBitsetArray(char *data, int numBytes)
+void align(char* data, int block_len)
 {
-    std::vector< std::bitset<8> > b(numBytes);
+	int numBytes = strlen(data);
+	if (numBytes%block_len!=0) 
+	{
+		char* tmp = new char[numBytes + numBytes%block_len+1];
+		strcpy(tmp, data);
+		for (int i=numBytes; i<numBytes + numBytes%block_len; i++) tmp[i]=' ';
+		tmp[numBytes + numBytes%block_len]='\0';
+		strcpy(data, tmp);
+	}
+}
 
-    for(int i = 0; i < numBytes; ++i)
+template <int block_len>
+std::vector< std::bitset<block_len> > bytesToBitsetArray(char *data)
+{
+	int numBytes = strlen(data);
+	int keyBytes = block_len / 8;
+	int numBlocks;
+	if (numBytes%keyBytes==0)
+		numBlocks = numBytes * 8 / block_len;
+	else
+		numBlocks = numBytes * 8 / block_len + 1;
+	align(data, block_len);
+
+    std::vector< std::bitset<block_len> > b(numBlocks);
+
+    for(int i = 0; i < numBlocks; ++i)
     {
-        char cur = data[i];
-
-        for(int bit = 0; bit < 8; ++bit)
+        char block[keyBytes];
+        char cur;
+        for (int j = 0; j < keyBytes; ++j) 
+        	block[j] = data[i+j];
+        for(int bit = 0; bit < block_len; ++bit)
         {
-            b[i][bit] = cur & 1;
-            cur >>= 1;  
+        	cur = block[bit/8];
+        	b[i][bit] = cur & 1;
+           	cur >>= 1;  
         }
     }
 
-    return b;
+    return b; 
 }
 
 const char* encode(const Permutation& perm, char* text) 
@@ -30,7 +57,7 @@ const char* encode(const Permutation& perm, char* text)
 	int size=strlen(text);
 	char* out=new char[size+1];
 	out[size]='\0';
-	std::vector< std::bitset<8> > bytes=bytesToBitsetArray(text, size);
+	std::vector< std::bitset<8> > bytes=bytesToBitsetArray<8>(text);
 	for (int i=0; i<size; i++)
 	{
 		std::bitset<8> cur;
