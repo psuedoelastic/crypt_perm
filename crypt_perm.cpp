@@ -25,9 +25,7 @@ std::vector< std::bitset<8> > explodeBitset( std::bitset<block_len> block )
 {
 	std::vector< std::bitset<8> > res( block_len/8 );
 	for (int i=0; i<block_len; i++)
-	{
 		res[i/8][i%8]=block[i];	
-	}
 	return res;
 }
 
@@ -74,21 +72,18 @@ const char* encode(const Permutation& perm, char* text)
 	char* out=new char[alignedBytes + 1];
 	out[alignedBytes]='\0';
 	std::vector< std::bitset<block_len> > bytes = bytesToBitsetArray<block_len>(text);
-	for (int i=0; i<numBlocks; ++i)
+	for (int i=0; i<numBytes; i+=numKeyBytes)
 	{
 		std::bitset<block_len> block;
 		/* permutate bits in block */
 		for (int bit=0; bit<block_len; ++bit) 
-		{
 			block[bit]=bytes[i][perm[bit]-1];
-		}
-		/* explode bitset<block> into bitset<8> */
+		/* explode bitset<block_len> into bitset<8> */
 		std::vector< std::bitset<8> > b = explodeBitset<block_len>(block);
-		for (int j=0; j<numKeyBytes; ++j) 
-		{
-			out[i+j]=char(b[j].to_ulong());
-		}
 		
+		/* write encoded block into output */
+		for (int j=0; j<numKeyBytes; ++j) 
+			out[i+j]=char(b[j].to_ulong());
 	}
 	return out;
 }
