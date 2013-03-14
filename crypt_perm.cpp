@@ -1,7 +1,7 @@
 /*
  * Copyright (c) Jenia Grubian
  * Licensed under GPLv2
- * Simple cryptography library that uses permutations of 8 numbers to encrypt and decrypt byte array
+ * Simple cryptography library that uses permutations to encrypt and decrypt byte array
  */
 
 #include "crypt_perm.h"
@@ -24,9 +24,9 @@ template <int block_len>
 std::vector< std::bitset<block_len> > bytesToBitsetArray(char *data)
 {
 	int numBytes = strlen(data);
-	int keyBytes = block_len / 8;
+	int numKeyBytes = block_len / 8;
 	int numBlocks;
-	if (numBytes%keyBytes==0)
+	if (numBytes%numKeyBytes==0)
 		numBlocks = numBytes * 8 / block_len;
 	else
 		numBlocks = numBytes * 8 / block_len + 1;
@@ -36,9 +36,9 @@ std::vector< std::bitset<block_len> > bytesToBitsetArray(char *data)
 
     for(int i = 0; i < numBlocks; ++i)
     {
-        char block[keyBytes];
+        char block[numKeyBytes];
         char cur;
-        for (int j = 0; j < keyBytes; ++j) 
+        for (int j = 0; j < numKeyBytes; ++j) 
         	block[j] = data[i+j];
         for(int bit = 0; bit < block_len; ++bit)
         {
@@ -53,18 +53,23 @@ std::vector< std::bitset<block_len> > bytesToBitsetArray(char *data)
 
 const char* encode(const Permutation& perm, char* text) 
 {
-	if (perm.k!=8) return "invalid permutation, must be 8 numbers";
-	int size=strlen(text);
-	char* out=new char[size+1];
-	out[size]='\0';
-	std::vector< std::bitset<8> > bytes=bytesToBitsetArray<8>(text);
-	for (int i=0; i<size; i++)
+	int block_len = perm.k;
+	if (block_len & (block_len-1)) return "invalid permutation, number of elements must be power of 2";
+	int numKeyBytes = block_len /8;
+	int numBytes = strlen(text);
+	int alignedBytes = numBytes + numBytes%keyBytes;
+	int numBlocks = alignedBytes / numKeyBytes;
+	char* out=new char[alignedBytes + 1];
+	out[alignedBytes]='\0';
+	std::vector< std::bitset<block_len> > bytes = bytesToBitsetArray<block_len>(text);
+	for (int i=0; i<numBytes; ++i)
 	{
-		std::bitset<8> cur;
-		for (int bit=0; bit<8; bit++) 
+		std::bitset<block_len> cur;
+		for (int bit=0; bit<block_len; ++bit) 
 		{
 			cur[bit]=bytes[i][perm[bit]-1];
 		}
+		for (int j=0; j<numKeyBytes; ++j) {}
 		out[i]=char(cur.to_ulong());
 	}
 	return out;
