@@ -1,7 +1,7 @@
 /*
  * Copyright (c) Jenia Grubian
  * Licensed under GPLv2
- * Simple cryptography library that uses permutations of 8 numbers to encrypt and decrypt byte array
+ * Simple cryptography library that uses permutations to encrypt and decrypt byte array
  */
 
 #ifndef CRYPT_PERM_H
@@ -25,6 +25,9 @@ const char* decode(const Permutation&, char*);
 
 
 void align(char*, int);
+
+template <int block_len>
+std::vector< std::bitset<8> > explodeBitset(std::bitset<block_len>);
 
 template <int block_len>
 std::vector< std::bitset<block_len> > bytesToBitsetArray(char*);
