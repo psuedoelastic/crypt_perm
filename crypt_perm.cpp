@@ -21,6 +21,17 @@ void align(char* data, int block_len)
 }
 
 template <int block_len>
+std::vector< std::bitset<8> > explodeBitset( std::bitset<block_len> block )
+{
+	std::vector< std::bitset<8> > res( block_len/8 );
+	for (int i=0; i<block_len; i++)
+	{
+		res[i/8][i%8]=block[i];	
+	}
+	return res;
+}
+
+template <int block_len>
 std::vector< std::bitset<block_len> > bytesToBitsetArray(char *data)
 {
 	int numBytes = strlen(data);
@@ -58,19 +69,26 @@ const char* encode(const Permutation& perm, char* text)
 	int numKeyBytes = block_len /8;
 	int numBytes = strlen(text);
 	int alignedBytes = numBytes + numBytes%keyBytes;
+	align(text, numKeyBytes);
 	int numBlocks = alignedBytes / numKeyBytes;
 	char* out=new char[alignedBytes + 1];
 	out[alignedBytes]='\0';
 	std::vector< std::bitset<block_len> > bytes = bytesToBitsetArray<block_len>(text);
-	for (int i=0; i<numBytes; ++i)
+	for (int i=0; i<numBlocks; ++i)
 	{
-		std::bitset<block_len> cur;
+		std::bitset<block_len> block;
+		/* permutate bits in block */
 		for (int bit=0; bit<block_len; ++bit) 
 		{
-			cur[bit]=bytes[i][perm[bit]-1];
+			block[bit]=bytes[i][perm[bit]-1];
 		}
-		for (int j=0; j<numKeyBytes; ++j) {}
-		out[i]=char(cur.to_ulong());
+		/* explode bitset<block> into bitset<8> */
+		std::vector< std::bitset<8> > b = explodeBitset<block_len>(block);
+		for (int j=0; j<numKeyBytes; ++j) 
+		{
+			out[i+j]=char(b[j].to_ulong());
+		}
+		
 	}
 	return out;
 }
