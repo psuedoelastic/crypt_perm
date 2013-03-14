@@ -39,7 +39,7 @@ std::vector< std::bitset<block_len> > bytesToBitsetArray(char *data)
 		numBlocks = numBytes * 8 / block_len;
 	else
 		numBlocks = numBytes * 8 / block_len + 1;
-	align(data, block_len);
+	align(data, numKeyBytes);
 
     std::vector< std::bitset<block_len> > b(numBlocks);
 
@@ -67,7 +67,6 @@ const char* encode(const Permutation& perm, char* text)
 	int numKeyBytes = block_len /8;
 	int numBytes = strlen(text);
 	int alignedBytes = numBytes + numBytes%keyBytes;
-	align(text, numKeyBytes);
 	int numBlocks = alignedBytes / numKeyBytes;
 	char* out=new char[alignedBytes + 1];
 	out[alignedBytes]='\0';
