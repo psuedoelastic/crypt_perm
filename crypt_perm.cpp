@@ -20,44 +20,30 @@ void align(char* data, u_int block_len)
 	}
 }
 
-/*std::vector< std::bitset<8> > explodeBitset( Block& block )
-{
-	u_int block_len = block.size;
-	std::vector< std::bitset<8> > res( block_len/8 );
-	for (int i=0; i<block_len; i++)
-		res[i/8][i%8]=block[i];	
-	return res;
-}*/
-
 std::vector< Block > bytesToBitsetArray(char *data, u_int block_len)
 {
-	u_int numBytes = strlen(data);
 	u_int numKeyBytes = block_len / 8;
-	u_int numBlocks;
-	if (numBytes%numKeyBytes==0)
-		numBlocks = numBytes * 8 / block_len;
-	else
-		numBlocks = numBytes / numKeyBytes + numBytes%numKeyBytes;
+
 	align(data, numKeyBytes);
-
-    std::vector< Block > b(numBlocks);
-
-    for(u_int i = 0; i < numBytes; i+=numKeyBytes)
+	u_int numAlignedBytes = strlen(data);
+    std::vector< Block > b;
+    for(u_int i = 0; i < numAlignedBytes; i+=numKeyBytes)
     {
-    	b[i]=Block(block_len);
+    	Block tmp(block_len);
+    	
         char block[numKeyBytes];
-        char cur;
         for (u_int j = 0; j < numKeyBytes; ++j) 
-        	block[j] = data[i+j];
+        	block[j] = data[i+j]; 
+
         for(u_int bit = 0; bit < block_len; ++bit)
         {
-        	cur = block[bit/8];
-        	b[i][bit] = cur & 1;
-           	cur >>= 1;  
+        	tmp[bit] = block[bit/8] & 1;
+           	block[bit/8] >>= 1;
         }
-    }
 
-    return b; 
+        b.push_back(tmp);
+    }
+    return b;
 }
 
 const char* encode(const Permutation& perm, char* text) 
@@ -70,13 +56,14 @@ const char* encode(const Permutation& perm, char* text)
 	char* out=new char[alignedBytes + 1];
 	out[alignedBytes]='\0';
 	std::vector< Block > bytes = bytesToBitsetArray(text, block_len);
-	for (u_int i=0; i<numBytes; i+=numKeyBytes)
+
+	for (u_int i=0; i<alignedBytes; i+=numKeyBytes)
 	{
 		Block block(block_len);
 		/* permutate bits in block */
 		for (u_int bit=0; bit<block_len; ++bit) 
-			block[bit]=bytes[i][perm[bit]-1];
-		
+			block[bit]=bytes[i/numKeyBytes][perm[bit]-1];
+
 		/* write encoded block into output */
 		for (u_int j=0; j<numKeyBytes; ++j) 
 			out[i+j]=char(block.bytes[j].to_ulong());
