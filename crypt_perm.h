@@ -30,9 +30,9 @@ struct Block
  * They take permutation(key of the cipher) and byte array that is needed to be encoded or decoded
  */
 
-const char* encode(const Permutation&, char*);
+const char* encode(int*, char*);
 
-const char* decode(const Permutation&, char*);
+const char* decode(int*, char*);
 
 /* Function that aligns byte array depended on number of blocks */ 
 void align(char*, u_int);
