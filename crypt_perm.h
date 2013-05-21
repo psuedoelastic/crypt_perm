@@ -40,5 +40,7 @@ void align(char*, u_int);
 /* Function that explodes byte array into blocks of bits */
 std::vector<Block> bytesToBitsetArray(char*, u_int);
 
+/*  */
+int* reverse(const int*);
 /* note: to convert const char* to char* use strdup() */
 #endif /* CRYPT_PERM_H */
