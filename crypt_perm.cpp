@@ -20,6 +20,16 @@ void align(char* data, u_int block_len)
 	}
 }
 
+u_char* reverse(u_char* perm, u_int block_len) 
+{
+	u_char* out=new u_char[block_len];
+	for (u_int i=0; i<block_len; i++)
+	{
+		out[perm[i]-1]=i+1;
+	}
+	return out;
+}
+
 std::vector< Block > bytesToBitsetArray(char *data, u_int block_len)
 {
 	u_int numKeyBytes = block_len / 8;
@@ -46,9 +56,8 @@ std::vector< Block > bytesToBitsetArray(char *data, u_int block_len)
     return b;
 }
 
-const char* encode(const Permutation& perm, char* text) 
+const char* encode(u_char* perm, u_int block_len, char* text) 
 {
-	u_int block_len = perm.k;
 	if (block_len & (block_len-1)) return "invalid permutation, number of elements must be power of 2";
 	u_int numKeyBytes = block_len /8;
 	u_int numBytes = strlen(text);
@@ -71,7 +80,8 @@ const char* encode(const Permutation& perm, char* text)
 	return out;
 }
 
-const char* decode(const Permutation& perm, char* text)
+const char* decode(u_char* perm, u_int block_len, char* text)
 {
-	return encode(-perm, text);
+	return encode(reverse(perm, block_len), block_len, text);
 }
+

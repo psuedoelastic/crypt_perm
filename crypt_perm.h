@@ -30,9 +30,9 @@ struct Block
  * They take permutation(key of the cipher) and byte array that is needed to be encoded or decoded
  */
 
-const char* encode(int*, char*);
+const char* encode(u_char*, u_int, char*);
 
-const char* decode(int*, char*);
+const char* decode(u_char*, u_int, char*);
 
 /* Function that aligns byte array depended on number of blocks */ 
 void align(char*, u_int);
@@ -41,6 +41,7 @@ void align(char*, u_int);
 std::vector<Block> bytesToBitsetArray(char*, u_int);
 
 /*  */
-int* reverse(const int*);
+u_char* reverse(u_char*, u_int);
+
 /* note: to convert const char* to char* use strdup() */
 #endif /* CRYPT_PERM_H */
