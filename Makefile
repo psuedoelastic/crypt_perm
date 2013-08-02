@@ -5,9 +5,9 @@ all: encoder
 encoder: crypt_perm.a encoder.o
 	$(GXX) $(FLAGS) encoder.o crypt_perm.a -o encoder
 
-encoder.o:
+encoder.o: encoder.cpp
 	$(GXX) $(FLAGS) -c encoder.cpp
-	
+
 crypt_perm.a: crypt_perm.o 
 	ar rvs crypt_perm.a crypt_perm.o 
 
