@@ -10,6 +10,23 @@
 
 using namespace std;
 
+char* split_into_chars(char* str, const char* delimiter) {
+	u_int i = 0, c = 1;
+	while (str[i]!='\0') {
+		if (str[i] == ' ') c++;
+		i++;
+	}
+	char* splitted = new char[c];
+	char* token = strtok(str, delimiter);
+	splitted[0] = (strlen(token)==1) ? (int)token[0] - 48 : (int)token[0]*10 + (int)token[1] - 48;
+	for(u_int i=1; i<c; i++) {
+		token = strtok(0, delimiter);
+		splitted[i] = (strlen(token)==1) ? (int)token[0] - 48 : ((int)token[0]-48)*10 + (int)token[1] - 48; 
+		//show me the way to the next little char, oh don't ask why...
+	}
+	return splitted;
+}
+
 int main(int argc, char** argv) {
 	if (argc==1) { 
 		cerr<<"No source file in input."<<endl; 
@@ -32,13 +49,20 @@ int main(int argc, char** argv) {
 		char* destiny = argv[2];
 		char* key = argv[3];
 		u_int key_len = strlen(key);
-		for (u_int i=0; i<key_len; i++) key[i]=(int)key[i]-48; // convert ascii 'int' chars to 'pure int' chars, e.g. '1' => 1
+		if (key_len==8)
+			for (u_int i=0; i<key_len; i++) key[i]=(int)key[i]-48; 
+		else {
+			key = split_into_chars(key, " ");
+			key_len = strlen(key);
+			//for (u_int i=0; i<key_len; i++) cout<<(int)key[i];
+		}
 
 		ifstream in(source);
 		ofstream out(destiny);
 		string text((istreambuf_iterator<char>(in)), istreambuf_iterator<char>());
 		
 		const char* encoded = encode((u_char*)key, key_len, strdup(text.c_str()));
+		//const char* decoded = decode((u_char*)key, key_len, strdup(encoded));
 		out << encoded;
 		return EXIT_SUCCES;
 	}
