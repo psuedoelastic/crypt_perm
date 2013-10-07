@@ -18,7 +18,7 @@ char* split_into_chars(char* str, const char* delimiter) {
 	}
 	char* splitted = new char[c];
 	char* token = strtok(str, delimiter);
-	splitted[0] = (strlen(token)==1) ? (int)token[0] - 48 : (int)token[0]*10 + (int)token[1] - 48;
+	splitted[0] = (strlen(token)==1) ? (int)token[0] - 48 : ((int)token[0]*10-48) + (int)token[1] - 48;
 	for(u_int i=1; i<c; i++) {
 		token = strtok(0, delimiter);
 		splitted[i] = (strlen(token)==1) ? (int)token[0] - 48 : ((int)token[0]-48)*10 + (int)token[1] - 48; 
